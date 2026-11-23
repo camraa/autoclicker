@@ -300,7 +300,7 @@ internal sealed class MenuForm : MacForm
     }
 
     /// <summary>
-    /// Recharge une config perso intégrée dans l'exe (ex. « camra_afk ») : boutons à position fixe
+    /// Recharge une config perso intégrée dans l'exe (ex. « AFK config auto farm ») : boutons à position fixe
     /// et macro. Les autres réglages (téléphone, détection, touches…) ne changent pas.
     /// </summary>
     public void ApplyPreset(string name)
