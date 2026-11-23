@@ -1,0 +1,192 @@
+AUTO CLIC 2.5
+=============
+
+Clique tout seul sur l'écran, de deux façons (utilisables ensemble) :
+- Boutons à position fixe : des points que tu places, cliqués dans l'ordre,
+  avec le temps d'attente que tu veux après chacun.
+- Détection auto : tu montres une fois chaque bouton au programme (en l'entourant,
+  même grossièrement), il le cherche à l'écran en continu et agit dès qu'il
+  apparaît, où qu'il soit : clic, double-clic, clic droit ou touche.
+En option : macro anti-AFK (touches et souris, réglables).
+Alertes sur ton téléphone, captures d'écran régulières (surveillance), commandes
+depuis le téléphone (télécommande), enchaînements de boutons, pause automatique
+quand le jeu n'est plus au premier plan, photos de l'écran, arrêt automatique. Interface façon macOS (suit le thème clair /
+sombre de Windows).
+
+
+INSTALLATION / AUTRE PC
+-----------------------
+Rien à installer : Windows 10 ou 11 suffit. AutoClic.exe marche tout seul.
+
+1. Copie AutoClic.exe où tu veux (par exemple dans un dossier Documents\AutoClic).
+   Pour garder tes réglages, copie aussi boutons.json et le dossier images
+   qui sont à côté de l'exe.
+2. Double-clique sur AutoClic.exe.
+   Si Windows affiche "Windows a protégé votre ordinateur" :
+   clique sur "Informations complémentaires" puis "Exécuter quand même".
+3. Une notification "Auto Clic prêt" apparaît en haut à gauche,
+   et une icône (cible rouge) près de l'horloge.
+
+Astuce : pour le lancer au démarrage de Windows, fais Windows + R, tape
+shell:startup, puis place dans ce dossier un raccourci vers AutoClic.exe.
+
+
+TOUCHES (modifiables dans Paramètres > Touches)
+-------
+Inser   = afficher / cacher le menu
+F10     = lancer / arrêter
+
+Clic droit sur l'icône près de l'horloge : lancer / arrêter, Pause 5 min
+(puis Reprendre), Réglages, envoyer une capture au téléphone, ouvrir le journal
+ou les photos, quitter.
+
+Fenêtres : pastille rouge = fermer (le menu se cache, le programme continue),
+pastille jaune = réduire. On les déplace en tirant la barre du haut.
+
+
+BOUTONS À POSITION FIXE
+-----------------------
+- "Ajouter un bouton (position fixe)" fait apparaître un rond rouge numéroté.
+  Glisse-le là où il faut cliquer (clic droit sur le rond = le supprimer).
+- Règle le temps à attendre après chaque clic (0,1 s à 1 h).
+
+
+DÉTECTION AUTO (autant de boutons que tu veux)
+---------------
+1. Attends que le bouton soit visible à l'écran (dans le jeu par exemple).
+2. Menu, puis "Capturer un bouton à détecter".
+3. L'écran se fige : entoure le bouton en glissant la souris. Pas besoin d'être
+   précis, le programme repère ce qui se détache (le bouton, son texte, ses
+   bords) et accorde peu d'importance au décor autour, même s'il change.
+   (Échap ou clic droit = annuler.)
+4. Case texte sous l'image (optionnelle) : le texte sur lequel agir, par
+   exemple REJOUER ou NON. Le programme le lit dans la zone trouvée et vise
+   pile dessus ; s'il n'y est pas, il ne fait rien.
+5. "Test" vérifie tout de suite : cadre vert = zone trouvée, cadre bleu = texte.
+   Si le bouton n'a plus la même taille (autre écran, autre réglage du jeu),
+   "Test" essaie d'autres tailles et garde celle qui marche.
+6. "puis X s" = pause avant de pouvoir agir à nouveau sur ce bouton.
+7. ⚙ (en bleu s'il est réglé) :
+   - action : clic gauche, double-clic, clic droit, ou appuyer sur une touche ;
+   - où chercher : tout l'écran, ou une zone que tu entoures (plus rapide,
+     et impossible de cliquer ailleurs) ;
+   - taille à l'écran (ajustée toute seule si la résolution change) ;
+   - alerte sur le téléphone quand ce bouton est détecté ;
+   - enchaînement : actif seulement juste après un autre bouton (voir plus bas).
+8. Coche "Détection auto", puis F10.
+
+Ressemblance minimum (75 % conseillé) :
+- le bouton n'est pas reconnu -> baisse (65, 60...)
+- ça agit sur des choses qui ressemblent mais ne sont pas le bouton -> monte (85),
+  remplis la case texte, ou limite la zone (⚙).
+
+Limites :
+- Si le jeu est en "plein écran exclusif", Windows peut ne rien voir de l'image :
+  mets le jeu en "plein écran fenêtré" (ou "fenêtré sans bordure").
+- La lecture du texte utilise celle intégrée à Windows. Si "Test" affiche
+  "Lecture de texte indisponible" : Paramètres > Heure et langue > Langue >
+  Français > Options > installer "Reconnaissance optique de caractères".
+
+
+RÉGLAGES (bouton "Paramètres" du menu)
+--------
+Touches     : les touches lancer / arrêter et menu (clique dans la case, appuie).
+Macro       : les touches envoyées (ex. Alt ; Maj+Z ; Inser), à quel rythme,
+              et de combien bouger la souris (0 = pas du tout).
+Arrêt auto  : après X h Y min de fonctionnement, et / ou à une heure donnée.
+Téléphone   : alertes (voir ci-dessous).
+Surveillance: une capture de l'écran envoyée sur le téléphone toutes les X min
+              (voir ci-dessous).
+Jeu         : pause automatique quand le jeu n'est pas au premier plan.
+Photos      : garder une capture de l'écran à chaque bouton détecté, quand plus
+              rien ne se passe, à l'arrêt automatique et en cas de problème
+              (300 dernières, dossier "captures"). Pratique pour comprendre
+              ce qui s'est passé pendant ton absence.
+
+
+ALERTES SUR LE TÉLÉPHONE
+------------------------
+Tu es prévenu : à l'arrêt automatique, quand aucun bouton n'est détecté depuis
+X minutes, en cas de problème (écran verrouillé…), et pour les boutons où tu as
+coché l'alerte (⚙). Au plus une alerte par minute pour un même évènement.
+
+Trois services gratuits au choix :
+- ntfy (le plus simple) : installe l'appli "ntfy", abonne-toi à un sujet,
+  mets le même nom de sujet dans Paramètres > Téléphone. Pas de compte.
+  ATTENTION : le sujet est public. N'importe qui connaissant son nom peut lire
+  tes alertes (et voir tes captures d'écran si tu les joins). Choisis un nom
+  impossible à deviner (bouton "Nouveau"), surtout si tu joins les captures.
+- Telegram (le plus privé) : crée un bot avec @BotFather, colle son code,
+  envoie /start à ton bot puis clique "Trouver".
+- Discord : colle l'adresse d'un webhook de ton serveur.
+"Envoyer un test" vérifie que tout marche.
+
+
+TÉLÉCOMMANDE (Réglages > Téléphone > Commander depuis le téléphone)
+------------
+Avec ntfy : chaque notification a trois boutons, « Pause 15 min », « Capture »
+et « Arrêter », qu'il suffit de toucher. Tu peux aussi t'abonner, dans l'appli
+ntfy, au sujet « <ton sujet>-cmd » et y écrire une commande.
+Avec Telegram : écris la commande à ton bot (seule ta conversation est écoutée).
+Commandes : lancer · stop · pause (15 min) ou pause 20 · reprendre · capture ·
+état (capture + où ça en est) · aide.
+Le programme répond par une notification. Garde le sujet secret : qui le connaît
+peut mettre en pause ou arrêter les clics.
+
+
+ENCHAÎNEMENTS (⚙ d'un bouton détecté > Actif)
+-------------
+Pour les écrans qui se suivent (fin de partie > Continuer > Rejouer) :
+« Actif : juste après le bouton N » = ce bouton n'est cherché et cliqué qu'après
+l'action sur le bouton N, en attendant d'abord X s, puis pendant Y s.
+Le reste du temps il est ignoré, même s'il est à l'écran.
+
+
+FENÊTRE DU JEU (Réglages > Jeu)
+--------------
+Choisis le jeu dans la liste (lance-le d'abord, puis « Actualiser la liste ») et
+active « Pause quand le jeu n'est pas au premier plan » : dès que tu passes sur
+une autre fenêtre, plus aucun clic ni touche ; ça reprend tout seul quand tu
+reviens sur le jeu. Le jeu est reconnu par son programme, pas par son titre.
+
+
+SURVEILLANCE (Réglages > Surveillance)
+------------
+Toutes les X minutes, une capture de l'écran part sur ton téléphone avec l'état
+des clics (« En cours depuis 1 h 05 · 1234 clics »). Par défaut seulement
+pendant que les clics tournent ; « Aussi quand les clics sont arrêtés » pour
+l'avoir tout le temps. « Envoyer maintenant » envoie une capture tout de suite,
+et le menu de l'icône près de l'horloge aussi.
+La capture est prise en arrière-plan, sans la touche Impr. écran : le PC ne se
+fige pas et la macro continue de cliquer pendant ce temps.
+Utilise un sujet ntfy secret (ou Telegram) : la capture montre ton écran.
+
+
+À SAVOIR
+--------
+- Pendant que ça tourne, la touche du menu n'ouvre pas le menu (la macro
+  peut appuyer dessus) : arrête d'abord.
+- Le PC ne se met pas en veille et l'écran ne s'éteint pas tant que ça tourne.
+- Relancer AutoClic.exe alors qu'il tourne déjà ouvre simplement le menu.
+- Pour fermer : "Quitter" dans le menu, ou clic droit sur l'icône > Quitter.
+
+
+FICHIERS (créés à côté de AutoClic.exe)
+--------
+boutons.json    tes réglages (positions, temps, images, touches, alertes).
+images\         les captures des boutons à détecter.
+captures\       les photos de l'écran (journal en images).
+AutoClic.log    journal : lancé, arrêté, boutons détectés, "en cours" toutes les
+                10 min, erreurs. Clic droit sur l'icône > "Ouvrir le journal".
+
+Si le dossier de l'exe n'est pas modifiable (ex. Program Files), ces fichiers vont
+dans %LOCALAPPDATA%\AutoClic.
+
+
+POUR LE DÉVELOPPEUR
+-------------------
+src\            le code (C#, .NET Framework 4.8)
+build.ps1       reconstruit dist\AutoClic\AutoClic.exe et dist\AutoClic-<version>.zip
+                powershell -ExecutionPolicy Bypass -File build.ps1
+                (nécessite le SDK .NET et le kit Windows SDK, pour la lecture de texte)
+tools\          make-icon.ps1 redessine l'icône

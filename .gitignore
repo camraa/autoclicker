@@ -1,0 +1,12 @@
+# Données personnelles : jamais dans le dépôt
+boutons.json
+captures/
+images/
+*.log
+
+# Compilation
+bin/
+obj/
+dist/
+*.zip
+*.exe
