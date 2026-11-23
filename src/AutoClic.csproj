@@ -16,7 +16,7 @@
     <DebugType>none</DebugType>
     <SatelliteResourceLanguages>fr</SatelliteResourceLanguages>
 
-    <Version>2.6.0</Version>
+    <Version>2.6.1</Version>
     <Product>Auto Clic</Product>
     <AssemblyTitle>Auto Clic</AssemblyTitle>
     <Description>Clique automatiquement sur des points ou des boutons détectés à l'écran, avec macro anti-AFK.</Description>

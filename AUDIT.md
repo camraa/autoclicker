@@ -6,7 +6,7 @@ Sources : le code 2.6.0 (`src/`), la v1 (`v1/`) et un journal d'usage réel du 1
 
 | Priorité | Constat | Preuve | Correction proposée |
 |---|---|---|---|
-| Haute | « JOUER » est reconnu dans « SIGNALER JOUEUR » : le programme clique sur le signalement d'un joueur | Capture à l'appui ; 16 clics autour de (244, 1040) | Cause : `src/TextFinder.cs:124`, 1 lettre d'écart sur 6 donne 0,83 pour un seuil de 0,8. Exiger une longueur égale ou un seuil plus strict ; en attendant, limiter la zone de recherche |
+| **Corrigé (2.6.1)** | « JOUER » était reconnu dans « SIGNALER JOUEUR » : le programme cliquait sur le signalement d'un joueur | Capture à l'appui ; 16 clics autour de (244, 1040) | Texte court : une lettre différente est tolérée, plus une lettre en plus ou en moins (`src/TextFinder.cs`). « REJOUER » reste accepté |
 | Haute | Autres clics peu sûrs (75 à 85 %) | 29 clics vers (1775, 928), quelques-uns isolés ; cible non vérifiée | Seuil à 88 % (presque tous les clics du bouton habituel sont à 90 % ou plus) |
 | Moyenne | Alertes d'inactivité à chaque partie | 316 alertes ; 316 écarts de plus de 10 min entre détections (médiane 14,8, p90 18,3, max 40,9) | Délai de 25 min par défaut (10 dans `src/Storage.cs:255`) |
 | Moyenne | Double action sur le même bouton | 71 détections à moins de 5 s de la précédente | Attendre la disparition du bouton avant de réagir |
@@ -38,7 +38,7 @@ Sources : le code 2.6.0 (`src/`), la v1 (`v1/`) et un journal d'usage réel du 1
 
 ## Améliorations
 
-1. Mots entiers et seuil par bouton (corrige les mauvais clics).
+1. Seuil par bouton : les notifications « a commencé à jouer à Fortnite » contiennent vraiment le mot (75 à 79 % de ressemblance). Pas de règle « mot entier » : le bouton principal est « REJOUER ».
 2. Pause hors jeu activée par défaut (elle existe, désactivée dans la config observée).
 3. Tests automatiques : texte, échéances, lecture de la config.
 4. Compilation et publication par GitHub Actions.
