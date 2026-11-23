@@ -13,6 +13,9 @@ public static class Native {
     [DllImport("user32.dll")] public static extern uint MapVirtualKey(uint code, uint mapType);
     [DllImport("user32.dll")] public static extern short GetAsyncKeyState(int key);
     [DllImport("user32.dll")] public static extern bool SetProcessDPIAware();
+    [DllImport("kernel32.dll")] static extern uint SetThreadExecutionState(uint flags);
+    // Empêche la mise en veille / l'extinction de l'écran pendant que ça tourne
+    public static void KeepAwake(bool on) { SetThreadExecutionState(on ? 0x80000003u : 0x80000000u); }
 }
 // Fenêtre qui ne vole pas le focus et n'apparaît pas dans Alt+Tab
 public class MarkerForm : Form {
@@ -25,6 +28,20 @@ public class MarkerForm : Form {
 
 [Native]::SetProcessDPIAware() | Out-Null
 [System.Windows.Forms.Application]::EnableVisualStyles()
+# Une erreur ne doit jamais ouvrir une fenêtre d'erreur qui bloque tout (cachée derrière le jeu)
+[System.Windows.Forms.Application]::SetUnhandledExceptionMode([System.Windows.Forms.UnhandledExceptionMode]::CatchException)
+
+# Journal : AutoClic.log à côté du programme (pour savoir ce qui s'est passé)
+$LogFile = Join-Path $PSScriptRoot 'AutoClic.log'
+try { if ((Test-Path $LogFile) -and (Get-Item $LogFile).Length -gt 1MB) { Remove-Item $LogFile -Force } } catch { }
+function Write-Log($msg) {
+    try { Add-Content -Path $LogFile -Value ('{0:yyyy-MM-dd HH:mm:ss}  {1}' -f [DateTime]::Now, $msg) -Encoding UTF8 } catch { }
+}
+[System.Windows.Forms.Application]::add_ThreadException({ param($s, $e) Write-Log "ERREUR : $($e.Exception.Message)" })
+
+# Horloge qui ne saute jamais (contrairement à l'heure Windows, qui peut être recalée)
+$clock = [System.Diagnostics.Stopwatch]::StartNew()
+function Now-Sec { $clock.Elapsed.TotalSeconds }
 
 # Une seule copie du programme à la fois
 $created = $false
@@ -57,9 +74,11 @@ $state   = @{
     InsPrev       = $false
     Index         = 0
     Clicks        = 0
-    NextClick     = [DateTime]::Now
-    KeysNext      = [DateTime]::Now
-    MouseNext     = [DateTime]::Now
+    NextClick     = 0.0
+    KeysNext      = 0.0
+    MouseNext     = 0.0
+    NextStatus    = 0.0
+    CursorFail    = $false
     Drag          = $null
     PendingDelete = $null
 }
@@ -289,7 +308,11 @@ $form.add_FormClosing({ param($s, $e) if (-not $state.Quitting) { $e.Cancel = $t
 
 # ---------- Actions ----------
 function Invoke-LeftClick($x, $y) {
-    [Native]::SetCursorPos($x, $y) | Out-Null
+    $ok = [Native]::SetCursorPos($x, $y)
+    # Refusé = écran verrouillé / fenêtre administrateur au premier plan : on le note une fois
+    if (-not $ok -and -not $state.CursorFail) { Write-Log "Impossible de bouger la souris (écran verrouillé ?) après $($state.Clicks) clics" }
+    if ($ok -and $state.CursorFail) { Write-Log 'La souris répond de nouveau' }
+    $state.CursorFail = -not $ok
     [Native]::mouse_event(0x02, 0, 0, 0, [UIntPtr]::Zero)
     [Native]::mouse_event(0x04, 0, 0, 0, [UIntPtr]::Zero)
 }
@@ -318,13 +341,13 @@ function Invoke-Macro($now) {
             Send-Combo $combo
             $first = $false
         }
-        $state.KeysNext = [DateTime]::Now.AddSeconds($MacroKeysEvery)
+        $state.KeysNext = (Now-Sec) + $MacroKeysEvery
     }
     if ($now -ge $state.MouseNext) {
         [Native]::mouse_event(0x0001, $MacroMouseDist, 0, 0, [UIntPtr]::Zero)
         [System.Threading.Thread]::Sleep(100)
         [Native]::mouse_event(0x0001, -$MacroMouseDist, 0, 0, [UIntPtr]::Zero)
-        $state.MouseNext = [DateTime]::Now.AddSeconds($MacroMouseEvery)
+        $state.MouseNext = (Now-Sec) + $MacroMouseEvery
     }
 }
 
@@ -367,6 +390,8 @@ function Quit-App {
     $state.Quitting = $true
     $state.Running  = $false
     $timer.Stop()
+    [Native]::KeepAwake($false)
+    Write-Log 'Programme quitté'
     Save-Config
     Clear-Markers
     $tray.Visible = $false
@@ -379,29 +404,35 @@ $btnQuit.add_Click({ Quit-App })
 # ---------- Lancer / arrêter (F10) ----------
 function Start-All {
     if ($points.Count -eq 0 -and -not $chkMacro.Checked) { Show-Toast "Ajoute d'abord un bouton (Insert)"; return }
-    $now = [DateTime]::Now
+    $now = Now-Sec
     Hide-Menu                          # on cache le menu et les ronds pour ne pas cliquer dessus
-    $state.Running   = $true
-    $state.Index     = 0
-    $state.Clicks    = 0
-    $state.NextClick = $now
-    $state.KeysNext  = $now.AddSeconds($MacroKeysEvery)
-    $state.MouseNext = $now.AddSeconds($MacroMouseEvery)
+    $state.Running    = $true
+    $state.Index      = 0
+    $state.Clicks     = 0
+    $state.CursorFail = $false
+    $state.NextClick  = $now
+    $state.KeysNext   = $now + $MacroKeysEvery
+    $state.MouseNext  = $now + $MacroMouseEvery
+    $state.NextStatus = $now + 600
+    [Native]::KeepAwake($true)
     $tray.Text = 'Auto Clic - EN COURS (F10 = arrêter)'
+    Write-Log "Lancé : $($points.Count) boutons, macro = $($chkMacro.Checked)"
     Show-Toast 'Auto Clic : ACTIVÉ  (F10 = arrêter)'
 }
 
 function Stop-All {
     $state.Running = $false
+    [Native]::KeepAwake($false)
     $tray.Text = 'Auto Clic - Insert = menu, F10 = lancer'
+    Write-Log "Arrêté (F10) après $($state.Clicks) clics"
     Show-Toast "Auto Clic : ARRÊTÉ  ($($state.Clicks) clics)"
 }
 
 # ---------- Boucle (toutes les 20 ms) ----------
 $timer = New-Object System.Windows.Forms.Timer
 $timer.Interval = 20
-$timer.add_Tick({
-    $f10 = ([Native]::GetAsyncKeyState(0x79) -band 0x8000) -ne 0
+$timer.add_Tick({ try {
+    $f10 =([Native]::GetAsyncKeyState(0x79) -band 0x8000) -ne 0
     $ins = ([Native]::GetAsyncKeyState(0x2D) -band 0x8000) -ne 0
     $f10Pressed = $f10 -and -not $state.F10Prev; $state.F10Prev = $f10
     $insPressed = $ins -and -not $state.InsPrev; $state.InsPrev = $ins
@@ -422,16 +453,26 @@ $timer.add_Tick({
     }
 
     if (-not $state.Running) { return }
-    $now = [DateTime]::Now
+    $now = Now-Sec
     if ($points.Count -gt 0 -and $now -ge $state.NextClick) {
+        if ($state.Index -ge $points.Count) { $state.Index = 0 }
         $p = $points[$state.Index]
         Invoke-LeftClick $p.X $p.Y
         $state.Clicks++
-        $state.NextClick = [DateTime]::Now.AddSeconds([double]$p.Delay)   # temps propre à ce bouton
+        $state.NextClick = (Now-Sec) + [double]$p.Delay   # temps propre à ce bouton
         $state.Index = ($state.Index + 1) % $points.Count
     }
     if ($chkMacro.Checked) { Invoke-Macro $now }
-})
+
+    # Toutes les 10 min : une ligne dans le journal pour prouver que ça tourne encore
+    if ($now -ge $state.NextStatus) {
+        Write-Log "En cours : $($state.Clicks) clics"
+        $state.NextStatus = $now + 600
+    }
+} catch {
+    # Une erreur ne doit jamais arrêter la boucle : on la note et on continue
+    Write-Log "ERREUR : $($_.Exception.Message)"
+} })
 
 # ---------- Démarrage : rien à l'écran, juste une notification ----------
 Load-Config

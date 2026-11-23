@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!-- .NET Framework 4.8 : déjà présent sur tous les Windows 10 / 11, rien à installer -->
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>AutoClic</AssemblyName>
+    <RootNamespace>AutoClic</RootNamespace>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <DebugType>none</DebugType>
+    <SatelliteResourceLanguages>fr</SatelliteResourceLanguages>
+
+    <Version>2.6.0</Version>
+    <Product>Auto Clic</Product>
+    <AssemblyTitle>Auto Clic</AssemblyTitle>
+    <Description>Clique automatiquement sur des points ou des boutons détectés à l'écran, avec macro anti-AFK.</Description>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Net.Http" />
+    <EmbeddedResource Include="app.ico" LogicalName="AutoClic.app.ico" />
+    <!-- Configs perso intégrées (Config.LoadPreset) -->
+    <EmbeddedResource Include="presets\*.json" LogicalName="AutoClic.presets.%(Filename).json" Condition="'$(Edition)' != 'Client'" />
+    <!-- Mode d'emploi intégré (menu de l'icône > Aide) ; build.ps1 fournit une version sans la partie développeur -->
+    <EmbeddedResource Include="$(AppReadme)" LogicalName="AutoClic.LISEZ-MOI.txt" Condition="'$(AppReadme)' != ''" />
+    <EmbeddedResource Include="..\LISEZ-MOI.txt" LogicalName="AutoClic.LISEZ-MOI.txt" Condition="'$(AppReadme)' == ''" />
+  </ItemGroup>
+
+  <!-- Lecture de texte : l'OCR intégré à Windows 10 / 11 (rien à embarquer dans l'exe).
+       Pour compiler il faut le kit Windows SDK (Windows.winmd) ; pour exécuter, rien. -->
+  <PropertyGroup>
+    <WindowsKitMetadata>$(MSBuildProgramFiles32)\Windows Kits\10\UnionMetadata</WindowsKitMetadata>
+    <WindowsWinmd Condition="'$(WindowsWinmd)' == '' and Exists('$(WindowsKitMetadata)\10.0.26100.0\Windows.winmd')">$(WindowsKitMetadata)\10.0.26100.0\Windows.winmd</WindowsWinmd>
+    <WindowsWinmd Condition="'$(WindowsWinmd)' == '' and Exists('$(WindowsKitMetadata)\Facade\Windows.winmd')">$(WindowsKitMetadata)\Facade\Windows.winmd</WindowsWinmd>
+    <NetFxDir>$(SystemRoot)\Microsoft.NET\Framework64\v4.0.30319</NetFxDir>
+    <NetFxFacades>$(MSBuildProgramFiles32)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.8\Facades</NetFxFacades>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Windows"><HintPath>$(WindowsWinmd)</HintPath><Private>false</Private></Reference>
+    <Reference Include="System.Runtime.WindowsRuntime"><HintPath>$(NetFxDir)\System.Runtime.WindowsRuntime.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="System.Runtime"><HintPath>$(NetFxFacades)\System.Runtime.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="System.Runtime.InteropServices.WindowsRuntime"><HintPath>$(NetFxFacades)\System.Runtime.InteropServices.WindowsRuntime.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="System.Threading.Tasks"><HintPath>$(NetFxFacades)\System.Threading.Tasks.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+
+</Project>
