@@ -1,5 +1,5 @@
 ﻿# Construit les deux éditions d'Auto Clic :
-#   - perso  : dist\AutoClic\AutoClic.exe (+ dist\AutoClic.exe), avec la config perso camra_afk intégrée
+#   - perso  : dist\AutoClic\AutoClic.exe (+ dist\AutoClic.exe), avec la config perso AFK config auto farm intégrée
 #   - client : dist\client\AutoClic.exe et dist\AutoClic-<version>-client.zip, sans aucune config perso
 # Usage : powershell -ExecutionPolicy Bypass -File build.ps1
 $ErrorActionPreference = 'Stop'

@@ -193,7 +193,7 @@ POUR LE DÉVELOPPEUR
 -------------------
 src\            le code (C#, .NET Framework 4.8)
 build.ps1       reconstruit les deux éditions :
-                - perso  : dist\AutoClic\AutoClic.exe (avec la config camra_afk)
+                - perso  : dist\AutoClic\AutoClic.exe (avec la config AFK config auto farm)
                 - client : dist\client\AutoClic.exe et dist\AutoClic-<version>-client.zip
                   (sans aucune config perso : à donner aux clients)
                 powershell -ExecutionPolicy Bypass -File build.ps1
