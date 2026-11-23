@@ -133,7 +133,10 @@ internal sealed class TextFinder
             {
                 joined += words[j].Norm;
                 if (j > i) box = Rectangle.Union(box, words[j].Box);
-                double score = joined.Contains(q) ? 1.0 : Similarity(joined, q);
+                // Texte court : une lettre mal lue passe (J0UER), une lettre en plus ou en moins
+                // fait un autre mot (JOUEUR, joué). « REJOUER » contient « JOUER » : accepté.
+                bool comparable = q.Length >= 8 || joined.Length == q.Length;
+                double score = joined.Contains(q) ? 1.0 : comparable ? Similarity(joined, q) : 0;
                 if (score > bestScore) { bestScore = score; best = box; }
                 if (joined.Length > q.Length + 3) break;
             }
