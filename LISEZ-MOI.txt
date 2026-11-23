@@ -1,4 +1,4 @@
-AUTO CLIC 2.5
+AUTO CLIC 2.6
 =============
 
 Clique tout seul sur l'écran, de deux façons (utilisables ensemble) :
@@ -14,18 +14,21 @@ quand le jeu n'est plus au premier plan, photos de l'écran, arrêt automatique.
 sombre de Windows).
 
 
-INSTALLATION / AUTRE PC
------------------------
-Rien à installer : Windows 10 ou 11 suffit. AutoClic.exe marche tout seul.
+INSTALLATION
+------------
+Rien à installer : Windows 10 ou 11 suffit. AutoClic.exe contient tout.
 
-1. Copie AutoClic.exe où tu veux (par exemple dans un dossier Documents\AutoClic).
-   Pour garder tes réglages, copie aussi boutons.json et le dossier images
-   qui sont à côté de l'exe.
-2. Double-clique sur AutoClic.exe.
+1. Place AutoClic.exe où tu veux (Bureau, Documents…).
+2. Double-clique dessus.
    Si Windows affiche "Windows a protégé votre ordinateur" :
    clique sur "Informations complémentaires" puis "Exécuter quand même".
-3. Une notification "Auto Clic prêt" apparaît en haut à gauche,
-   et une icône (cible rouge) près de l'horloge.
+   (Certains antivirus se méfient des cliqueurs automatiques : autorise-le.)
+3. Au premier lancement, le menu s'ouvre tout seul. Ensuite le programme reste
+   discret : une icône (cible rouge) près de l'horloge.
+   Clic droit sur cette icône > "Aide" pour relire ce mode d'emploi.
+
+Pour le retirer : "Quitter", supprime AutoClic.exe et, si tu veux effacer tes
+réglages, le dossier %LOCALAPPDATA%\AutoClic.
 
 Astuce : pour le lancer au démarrage de Windows, fais Windows + R, tape
 shell:startup, puis place dans ce dossier un raccourci vers AutoClic.exe.
@@ -171,22 +174,28 @@ Utilise un sujet ntfy secret (ou Telegram) : la capture montre ton écran.
 - Pour fermer : "Quitter" dans le menu, ou clic droit sur l'icône > Quitter.
 
 
-FICHIERS (créés à côté de AutoClic.exe)
+FICHIERS (dans %LOCALAPPDATA%\AutoClic)
 --------
+Clic droit sur l'icône > "Ouvrir le dossier des réglages" pour y accéder.
 boutons.json    tes réglages (positions, temps, images, touches, alertes).
 images\         les captures des boutons à détecter.
 captures\       les photos de l'écran (journal en images).
 AutoClic.log    journal : lancé, arrêté, boutons détectés, "en cours" toutes les
                 10 min, erreurs. Clic droit sur l'icône > "Ouvrir le journal".
 
-Si le dossier de l'exe n'est pas modifiable (ex. Program Files), ces fichiers vont
-dans %LOCALAPPDATA%\AutoClic.
+Mode portable : si un fichier boutons.json se trouve à côté de AutoClic.exe, les
+réglages restent dans ce dossier-là (pratique sur une clé USB). Pour changer de
+PC en gardant tes réglages, copie le contenu du dossier des réglages à côté de
+l'exe.
 
 
 POUR LE DÉVELOPPEUR
 -------------------
 src\            le code (C#, .NET Framework 4.8)
-build.ps1       reconstruit dist\AutoClic\AutoClic.exe et dist\AutoClic-<version>.zip
+build.ps1       reconstruit les deux éditions :
+                - perso  : dist\AutoClic\AutoClic.exe (avec la config camra_afk)
+                - client : dist\client\AutoClic.exe et dist\AutoClic-<version>-client.zip
+                  (sans aucune config perso : à donner aux clients)
                 powershell -ExecutionPolicy Bypass -File build.ps1
                 (nécessite le SDK .NET et le kit Windows SDK, pour la lecture de texte)
 tools\          make-icon.ps1 redessine l'icône
